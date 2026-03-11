@@ -1,0 +1,77 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --ink: #1a1a2e;
+  --ink-soft: #4a4a6a;
+  --ink-muted: #9090aa;
+  --paper: #faf9f6;
+  --paper-warm: #f4f1ea;
+  --paper-dark: #ede9df;
+  --accent: #c9732a;
+  --accent-light: #f0a862;
+  --accent-pale: #fdf0e4;
+  --border: rgba(26,26,46,0.1);
+  --shadow: 0 2px 16px rgba(26,26,46,0.08);
+  --shadow-lg: 0 8px 40px rgba(26,26,46,0.14);
+  --radius: 12px;
+  --radius-sm: 8px;
+
+  --cat-Work: #4a7fb5;
+  --cat-Fitness: #5ba85a;
+  --cat-Social: #c9732a;
+  --cat-Family: #a855a0;
+  --cat-Learning: #2a9da8;
+  --cat-Health: #d95050;
+  --cat-Creative: #e07b39;
+  --cat-Rest: #7a9bb5;
+  --cat-Errands: #8a8a6a;
+  --cat-Travel: #5a7a5a;
+  --cat-Food: #c08030;
+  --cat-Spirituality: #8060a0;
+  --cat-Finance: #406080;
+  --cat-Hobbies: #7a5a8a;
+  --cat-Uncategorised: #aaaaaa;
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Playfair Display', serif;
+  line-height: 1.2;
+}
+
+a { color: inherit; text-decoration: none; }
+
+button {
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  border: none;
+  outline: none;
+}
+
+input, textarea, select {
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--paper-dark); border-radius: 3px; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}

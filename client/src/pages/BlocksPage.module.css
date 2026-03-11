@@ -1,0 +1,79 @@
+.page {
+  padding: 2.5rem 3rem;
+  max-width: 900px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+}
+
+.title {
+  font-size: 2rem;
+  color: var(--ink);
+  margin-bottom: 0.3rem;
+}
+
+.subtitle {
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+}
+
+.addBtn {
+  background: var(--accent);
+  color: white;
+  padding: 0.65rem 1.4rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  margin-top: 0.25rem;
+}
+
+.addBtn:hover {
+  background: #b5631f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(201,115,42,0.3);
+}
+
+.formOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26,26,46,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(2px);
+}
+
+.formModal {
+  background: var(--paper);
+  border-radius: var(--radius);
+  padding: 2rem;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.empty {
+  text-align: center;
+  color: var(--ink-muted);
+  padding: 4rem 2rem;
+}
+
+.emptyTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  color: var(--ink-soft);
+  margin-bottom: 0.5rem;
+}

@@ -1,0 +1,145 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.dateLabel {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 0.75rem;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  transition: box-shadow 0.15s, transform 0.15s;
+  position: relative;
+}
+
+.card:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+
+.cardLeft {
+  flex-shrink: 0;
+  text-align: right;
+  min-width: 80px;
+  padding-top: 2px;
+}
+
+.time {
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.duration {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  margin-top: 0.15rem;
+}
+
+.cardBody { flex: 1; }
+
+.blockTitle {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 0.2rem;
+}
+
+.desc {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  margin-bottom: 0.5rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.tag {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 100px;
+  background: color-mix(in srgb, var(--cat-color) 15%, white);
+  color: var(--cat-color);
+  border: 1px solid color-mix(in srgb, var(--cat-color) 30%, white);
+}
+
+.deleteBtn {
+  background: transparent;
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+  padding: 0.25rem;
+  border-radius: 4px;
+  opacity: 0;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.card:hover .deleteBtn { opacity: 1; }
+
+.deleteBtn:hover {
+  background: #fff0f0;
+  color: var(--cat-Health);
+}
+
+.checkBtn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: transparent;
+  color: white;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.checkBtn:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--accent-pale);
+}
+
+.checkBtn.checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.card.completed {
+  opacity: 0.7;
+  background: var(--paper-warm);
+}
+
+.completedTitle {
+  text-decoration: line-through;
+  color: var(--ink-muted);
+}

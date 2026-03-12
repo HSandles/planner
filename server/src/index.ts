@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken'
 import cookieParser from 'cookie-parser'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
+import { existsSync } from 'fs'
 
 const { Pool } = pg
 const app = express()
@@ -390,15 +391,11 @@ app.get('/api/analytics', requireAuth, async (req: Request, res: Response) => {
 })
 // Serve the React app in production
 if (process.env.NODE_ENV === 'production') {
-  const clientPath = join(process.cwd(), 'client/dist')
-
-  // Temporary debug — remove after fixing
-  import('fs').then(fs => {
-    console.log('cwd:', process.cwd())
-    console.log('clientPath:', clientPath)
-    console.log('exists:', fs.existsSync(clientPath))
-    console.log('contents:', fs.existsSync(clientPath) ? fs.readdirSync(clientPath) : 'NOT FOUND')
-  })
+  const clientPath = join(process.cwd(), '../client/dist')
+  
+  console.log('cwd:', process.cwd())
+  console.log('clientPath:', clientPath)
+  console.log('exists:', existsSync(clientPath))
 
   app.use(express.static(clientPath))
   app.get('*', (_req, res) => {

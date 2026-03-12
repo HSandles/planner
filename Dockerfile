@@ -2,19 +2,15 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy and build client
-COPY client/package*.json ./client/
-RUN cd client && npm install && chmod -R +x node_modules/.bin
-
+# Copy everything first
 COPY client/ ./client/
-RUN cd client && npm run build
-
-# Copy and build server
-COPY server/package*.json ./server/
-RUN cd server && npm install && chmod -R +x node_modules/.bin
-
 COPY server/ ./server/
-RUN cd server && npm run build
+
+# Build client
+RUN cd client && npm install && npm run build
+
+# Build server
+RUN cd server && npm install && npm run build
 
 WORKDIR /app/server
 

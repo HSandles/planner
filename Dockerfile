@@ -6,11 +6,11 @@ WORKDIR /app
 COPY client/ ./client/
 COPY server/ ./server/
 
-# Build client
-RUN cd client && npm install && npm run build
+# Build client (force install dev deps since vite is a devDependency)
+RUN cd client && npm install --include=dev && npm run build
 
 # Build server
-RUN cd server && npm install && npm run build
+RUN cd server && npm install --include=dev && npm run build
 
 WORKDIR /app/server
 

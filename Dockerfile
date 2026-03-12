@@ -7,14 +7,14 @@ COPY client/package*.json ./client/
 RUN cd client && npm install
 
 COPY client/ ./client/
-RUN cd client && npm run build
+RUN cd client && npx vite build
 
 # Copy and build server
 COPY server/package*.json ./server/
 RUN cd server && npm install
 
 COPY server/ ./server/
-RUN cd server && npm run build
+RUN cd server && npx tsc
 
 WORKDIR /app/server
 

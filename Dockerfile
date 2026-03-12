@@ -4,17 +4,17 @@ WORKDIR /app
 
 # Copy and build client
 COPY client/package*.json ./client/
-RUN cd client && npm install
+RUN cd client && npm install && chmod -R +x node_modules/.bin
 
 COPY client/ ./client/
-RUN cd client && npx vite build
+RUN cd client && npm run build
 
 # Copy and build server
 COPY server/package*.json ./server/
-RUN cd server && npm install
+RUN cd server && npm install && chmod -R +x node_modules/.bin
 
 COPY server/ ./server/
-RUN cd server && npx tsc
+RUN cd server && npm run build
 
 WORKDIR /app/server
 

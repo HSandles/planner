@@ -390,8 +390,7 @@ app.get('/api/analytics', requireAuth, async (req: Request, res: Response) => {
 })
 // Serve the React app in production
 if (process.env.NODE_ENV === 'production') {
-  const __dirname = dirname(fileURLToPath(import.meta.url))
-  const clientPath = join(__dirname, '../../../client/dist')
+  const clientPath = join(process.cwd(), '../client/dist')
   app.use(express.static(clientPath))
   app.get('*', (_req, res) => {
     res.sendFile(join(clientPath, 'index.html'))

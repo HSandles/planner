@@ -390,7 +390,7 @@ app.get('/api/analytics', requireAuth, async (req: Request, res: Response) => {
 })
 // Serve the React app in production
 if (process.env.NODE_ENV === 'production') {
-  const clientPath = join(process.cwd(), '../client/dist')
+  const clientPath = join(process.cwd(), 'client/dist')
 
   // Temporary debug — remove after fixing
   import('fs').then(fs => {
@@ -399,7 +399,7 @@ if (process.env.NODE_ENV === 'production') {
     console.log('exists:', fs.existsSync(clientPath))
     console.log('contents:', fs.existsSync(clientPath) ? fs.readdirSync(clientPath) : 'NOT FOUND')
   })
-  
+
   app.use(express.static(clientPath))
   app.get('*', (_req, res) => {
     res.sendFile(join(clientPath, 'index.html'))

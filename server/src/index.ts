@@ -391,9 +391,8 @@ app.get('/api/analytics', requireAuth, async (req: Request, res: Response) => {
 })
 // Serve the React app in production
 if (process.env.NODE_ENV === 'production') {
-  const clientPath = join(process.cwd(), '../client/dist')
+  const clientPath = '/app/client/dist'
   
-  console.log('cwd:', process.cwd())
   console.log('clientPath:', clientPath)
   console.log('exists:', existsSync(clientPath))
 

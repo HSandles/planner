@@ -1,31 +1,31 @@
-import { useState, FormEvent } from 'react'
-import { useAuth } from '../context/AuthContext'
-import styles from './AuthPage.module.css'
+import { useState, FormEvent } from "react";
+import { useAuth } from "../context/AuthContext";
+import styles from "./AuthPage.module.css";
 
 export default function AuthPage() {
-  const { login, register } = useAuth()
-  const [mode, setMode] = useState<'login' | 'register'>('login')
-  const [email, setEmail] = useState<string>('')
-  const [password, setPassword] = useState<string>('')
-  const [error, setError] = useState<string>('')
-  const [loading, setLoading] = useState<boolean>(false)
+  const { login, register } = useAuth();
+  const [mode, setMode] = useState<"login" | "register">("login");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
     try {
-      if (mode === 'login') {
-        await login(email, password)
+      if (mode === "login") {
+        await login(email, password);
       } else {
-        await register(email, password)
+        await register(email, password);
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Something went wrong')
-      setLoading(false)
+      setError(err instanceof Error ? err.message : "Something went wrong");
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className={styles.page}>
@@ -38,14 +38,26 @@ export default function AuthPage() {
 
         <div className={styles.tabs}>
           <button
-            className={mode === 'login' ? `${styles.tab} ${styles.active}` : styles.tab}
-            onClick={() => { setMode('login'); setError('') }}
+            className={
+              mode === "login" ? `${styles.tab} ${styles.active}` : styles.tab
+            }
+            onClick={() => {
+              setMode("login");
+              setError("");
+            }}
           >
             Sign in
           </button>
           <button
-            className={mode === 'register' ? `${styles.tab} ${styles.active}` : styles.tab}
-            onClick={() => { setMode('register'); setError('') }}
+            className={
+              mode === "register"
+                ? `${styles.tab} ${styles.active}`
+                : styles.tab
+            }
+            onClick={() => {
+              setMode("register");
+              setError("");
+            }}
           >
             Create account
           </button>
@@ -59,7 +71,7 @@ export default function AuthPage() {
               type="email"
               placeholder="you@example.com"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </label>
@@ -69,9 +81,9 @@ export default function AuthPage() {
             <input
               className={styles.input}
               type="password"
-              placeholder={mode === 'register' ? 'At least 8 characters' : ''}
+              placeholder={mode === "register" ? "At least 8 characters" : ""}
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
           </label>
@@ -79,10 +91,10 @@ export default function AuthPage() {
           {error && <p className={styles.error}>{error}</p>}
 
           <button className={styles.submit} type="submit" disabled={loading}>
-            {loading ? '...' : mode === 'login' ? 'Sign in' : 'Create account'}
+            {loading ? "..." : mode === "login" ? "Sign in" : "Create account"}
           </button>
         </form>
       </div>
     </div>
-  )
+  );
 }

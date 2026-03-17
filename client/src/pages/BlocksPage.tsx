@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import BlockForm from '../components/BlockForm'
 import BlockList from '../components/BlockList'
-import { Block } from '../types2'
+import { Block } from '../models'
 import styles from './BlocksPage.module.css'
 
 export default function BlocksPage() {

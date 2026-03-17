@@ -1,18 +1,18 @@
-import { Routes, Route, NavLink, Navigate } from 'react-router-dom'
-import { AuthProvider, useAuth } from './context/AuthContext'
-import BlocksPage from './pages/BlocksPage'
-import AnalyticsPage from './pages/AnalyticsPage'
-import AuthPage from './pages/AuthPage'
-import styles from './App.module.css'
+import { Routes, Route, NavLink, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import BlocksPage from "./pages/BlocksPage";
+import AnalyticsPage from "./pages/AnalyticsPage";
+import AuthPage from "./pages/AuthPage";
+import styles from "./App.module.css";
 
 function AppShell() {
-  const { user, loading, logout } = useAuth()
+  const { user, loading, logout } = useAuth();
 
   // Show nothing while we check for an existing session
-  if (loading) return <div className={styles.loading}>Loading…</div>
+  if (loading) return <div className={styles.loading}>Loading…</div>;
 
   // If not logged in, show the auth page
-  if (!user) return <AuthPage />
+  if (!user) return <AuthPage />;
 
   return (
     <div className={styles.app}>
@@ -45,7 +45,9 @@ function AppShell() {
 
         <div className={styles.userSection}>
           <p className={styles.userEmail}>{user.email}</p>
-          <button className={styles.logoutBtn} onClick={logout}>Sign out</button>
+          <button className={styles.logoutBtn} onClick={logout}>
+            Sign out
+          </button>
         </div>
       </aside>
 
@@ -57,7 +59,7 @@ function AppShell() {
         </Routes>
       </main>
     </div>
-  )
+  );
 }
 
 export default function App() {
@@ -65,5 +67,5 @@ export default function App() {
     <AuthProvider>
       <AppShell />
     </AuthProvider>
-  )
+  );
 }

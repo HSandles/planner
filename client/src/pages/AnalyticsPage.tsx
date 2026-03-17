@@ -7,6 +7,9 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
 import dayjs from "dayjs";
 import { AnalyticsEntry } from "../models";
@@ -22,14 +25,14 @@ const PERIODS: Period[] = [
     label: "This week",
     getDates: () => ({
       from: dayjs().startOf("week").format("YYYY-MM-DD"),
-      to: dayjs().endOf("week").format("YYYY-MM-DD"), // was dayjs().format(...)
+      to: dayjs().endOf("week").format("YYYY-MM-DD"),
     }),
   },
   {
     label: "This month",
     getDates: () => ({
       from: dayjs().startOf("month").format("YYYY-MM-DD"),
-      to: dayjs().endOf("month").format("YYYY-MM-DD"), // was dayjs().format(...)
+      to: dayjs().endOf("month").format("YYYY-MM-DD"),
     }),
   },
   {
@@ -42,6 +45,53 @@ const PERIODS: Period[] = [
   { label: "All time", getDates: () => ({}) },
 ];
 
+function getCatColor(name: string): string {
+  return (
+    getComputedStyle(document.documentElement)
+      .getPropertyValue(`--cat-${name.replace(/\s/g, "")}`)
+      .trim() || "#aaaaaa"
+  );
+}
+
+const RADIAN = Math.PI / 180;
+interface LabelProps {
+  cx: number;
+  cy: number;
+  midAngle: number;
+  innerRadius: number;
+  outerRadius: number;
+  percent: number;
+  name: string;
+}
+
+function renderCustomLabel({
+  cx,
+  cy,
+  midAngle,
+  innerRadius,
+  outerRadius,
+  percent,
+  name,
+}: LabelProps) {
+  if (percent < 0.05) return null; // hide labels for tiny slices
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="white"
+      textAnchor="middle"
+      dominantBaseline="central"
+      fontSize={11}
+      fontWeight={500}
+    >
+      {`${name} ${(percent * 100).toFixed(0)}%`}
+    </text>
+  );
+}
+
 export default function AnalyticsPage() {
   const [data, setData] = useState<AnalyticsEntry[]>([]);
   const [period, setPeriod] = useState<number>(0);
@@ -52,7 +102,7 @@ export default function AnalyticsPage() {
       setLoading(true);
       const { from, to } = PERIODS[period].getDates();
       const params = from && to ? `?from=${from}&to=${to}` : "";
-      const res = await fetch(`/api/analytics${params}`, {
+      const res = await fetch(`/api/blocks/analytics${params}`, {
         credentials: "include",
       });
       const json: AnalyticsEntry[] = await res.json();
@@ -66,6 +116,15 @@ export default function AnalyticsPage() {
   const totalCompleted = data.reduce((s, d) => s + d.completed, 0);
   const completionRate =
     totalPlanned > 0 ? Math.round((totalCompleted / totalPlanned) * 100) : 0;
+
+  // Only include categories with completed hours in the pie chart
+  const pieData = data
+    .filter((d) => d.completed > 0)
+    .map((d) => ({
+      name: d.category,
+      value: d.completed,
+      color: getCatColor(d.category),
+    }));
 
   return (
     <div className={styles.page}>
@@ -102,6 +161,7 @@ export default function AnalyticsPage() {
         </div>
       ) : (
         <>
+          {/* Stats row */}
           <div className={styles.statRow}>
             <div className={styles.stat}>
               <div className={styles.statValue}>{totalPlanned.toFixed(1)}h</div>
@@ -119,48 +179,87 @@ export default function AnalyticsPage() {
             </div>
           </div>
 
-          <div className={styles.chartCard}>
-            <h3 className={styles.chartTitle}>Planned vs Completed Hours</h3>
-            <ResponsiveContainer width="100%" height={320}>
-              <BarChart
-                data={data}
-                layout="vertical"
-                margin={{ left: 8, right: 24, top: 8, bottom: 8 }}
-              >
-                <XAxis
-                  type="number"
-                  unit="h"
-                  tick={{ fontSize: 12, fill: "#9090aa" }}
-                />
-                <YAxis
-                  type="category"
-                  dataKey="category"
-                  width={90}
-                  tick={{ fontSize: 12, fill: "#4a4a6a" }}
-                />
-                <Tooltip formatter={(v) => [`${v}h`]} />
-                <Legend />
-                <Bar
-                  dataKey="planned"
-                  name="Planned"
-                  fill="#c9d4e0"
-                  radius={[0, 4, 4, 0]}
-                />
-                <Bar
-                  dataKey="completed"
-                  name="Completed"
-                  fill="#c9732a"
-                  radius={[0, 4, 4, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+          {/* Charts row */}
+          <div className={styles.chartsRow}>
+            {/* Bar chart — planned vs completed */}
+            <div className={styles.chartCard}>
+              <h3 className={styles.chartTitle}>Planned vs Completed</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={data}
+                  layout="vertical"
+                  margin={{ left: 8, right: 24, top: 8, bottom: 8 }}
+                >
+                  <XAxis
+                    type="number"
+                    unit="h"
+                    tick={{ fontSize: 12, fill: "#9090aa" }}
+                  />
+                  <YAxis
+                    type="category"
+                    dataKey="category"
+                    width={90}
+                    tick={{ fontSize: 12, fill: "#4a4a6a" }}
+                  />
+                  <Tooltip formatter={(v) => [`${v}h`]} />
+                  <Legend />
+                  <Bar
+                    dataKey="planned"
+                    name="Planned"
+                    fill="#c9d4e0"
+                    radius={[0, 4, 4, 0]}
+                  />
+                  <Bar
+                    dataKey="completed"
+                    name="Completed"
+                    fill="#c9732a"
+                    radius={[0, 4, 4, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Pie chart — completed hours distribution */}
+            <div className={styles.chartCard}>
+              <h3 className={styles.chartTitle}>Completed Hours by Category</h3>
+              {pieData.length === 0 ? (
+                <div className={styles.pieEmpty}>
+                  No completed blocks yet for this period.
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={pieData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={120}
+                      labelLine={false}
+                      label={renderCustomLabel}
+                    >
+                      {pieData.map((entry) => (
+                        <Cell key={entry.name} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(v) => [`${v}h`, "Completed"]} />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
+            </div>
           </div>
 
+          {/* Breakdown table */}
           <div className={styles.breakdown}>
             <h3 className={styles.chartTitle}>Full Breakdown</h3>
             <div className={styles.breakdownList}>
               {data.map((d) => (
                 <div key={d.category} className={styles.breakdownRow}>
+                  <span
+                    className={styles.dot}
+                    style={{ background: getCatColor(d.category) }}
+                  />
                   <span className={styles.breakdownCat}>{d.category}</span>
                   <div className={styles.barGroup}>
                     <div className={styles.barTrack}>
@@ -175,7 +274,7 @@ export default function AnalyticsPage() {
                       <div
                         className={styles.barFillCompleted}
                         style={{
-                          width: `${(d.planned > 0 ? d.completed / d.planned : 0) * 100}%`,
+                          width: `${d.planned > 0 ? (d.completed / d.planned) * 100 : 0}%`,
                         }}
                       />
                     </div>

@@ -49,6 +49,21 @@ await db.execute(sql`
     created_at TIMESTAMPTZ DEFAULT NOW()
   )
 `);
+await pool.query(`
+  ALTER TABLE users ADD COLUMN IF NOT EXISTS verified BOOLEAN NOT NULL DEFAULT FALSE
+`);
+
+await pool.query(`
+  CREATE TABLE IF NOT EXISTS email_tokens (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    token TEXT UNIQUE NOT NULL,
+    type TEXT NOT NULL,
+    expires_at TIMESTAMPTZ NOT NULL,
+    used_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  )
+`);
 
 // Routes
 app.use("/auth", authRouter);

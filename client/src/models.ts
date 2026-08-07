@@ -38,4 +38,5 @@ export interface AnalyticsEntry {
 export interface User {
   id: number;
   email: string;
+  verified: boolean;
 }

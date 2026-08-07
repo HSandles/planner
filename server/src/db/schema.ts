@@ -8,14 +8,23 @@ import {
   jsonb,
 } from "drizzle-orm/pg-core";
 
-// These table definitions serve double duty:
-// 1. They describe the database schema to Drizzle
-// 2. Drizzle infers TypeScript types from them automatically
-
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   email: text("email").unique().notNull(),
   passwordHash: text("password_hash").notNull(),
+  verified: boolean("verified").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const emailTokens = pgTable("email_tokens", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  token: text("token").unique().notNull(),
+  type: text("type").notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  usedAt: timestamp("used_at"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -35,9 +44,8 @@ export const blocks = pgTable("blocks", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Drizzle can infer the TypeScript type of a row from the table definition.
-// These are used throughout the routes instead of manually written interfaces.
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+export type EmailToken = typeof emailTokens.$inferSelect;
 export type Block = typeof blocks.$inferSelect;
 export type NewBlock = typeof blocks.$inferInsert;

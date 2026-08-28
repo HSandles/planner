@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -51,6 +52,35 @@ await db.execute(sql`
 `);
 await pool.query(`
   ALTER TABLE users ADD COLUMN IF NOT EXISTS verified BOOLEAN NOT NULL DEFAULT FALSE
+`);
+
+await pool.query(`
+  CREATE TABLE IF NOT EXISTS block_series (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    description TEXT DEFAULT '',
+    start_time TEXT NOT NULL,
+    end_time TEXT NOT NULL,
+    categories JSONB NOT NULL DEFAULT '[]',
+    freq TEXT NOT NULL,
+    interval INTEGER NOT NULL DEFAULT 1,
+    by_weekday JSONB NOT NULL DEFAULT '[]',
+    start_date TEXT NOT NULL,
+    end_date TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  )
+`);
+
+// SET NULL, not CASCADE — see the note in db/schema.ts.
+await pool.query(`
+  ALTER TABLE blocks ADD COLUMN IF NOT EXISTS series_id INTEGER
+    REFERENCES block_series(id) ON DELETE SET NULL
+`);
+
+// Every series-scoped query filters on (series_id, date).
+await pool.query(`
+  CREATE INDEX IF NOT EXISTS blocks_series_date_idx ON blocks (series_id, date)
 `);
 
 await pool.query(`

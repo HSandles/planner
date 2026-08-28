@@ -106,12 +106,46 @@ function BlockCard({
   );
 }
 
+function DateGroup({
+  date,
+  blocks,
+  onDelete,
+  onEdit,
+  onToggleComplete,
+}: {
+  date: string;
+  blocks: Block[];
+} & Omit<BlockListProps, "blocks">) {
+  return (
+    <section className={styles.dateGroup}>
+      <h3 className={styles.dateLabel}>
+        {dayjs(date).format("dddd, D MMMM YYYY")}
+      </h3>
+      <div className={styles.cards}>
+        {blocks
+          .sort((a, b) => a.startTime.localeCompare(b.startTime))
+          .map((block) => (
+            <BlockCard
+              key={block.id}
+              block={block}
+              onDelete={onDelete}
+              onEdit={onEdit}
+              onToggleComplete={onToggleComplete}
+            />
+          ))}
+      </div>
+    </section>
+  );
+}
+
 export default function BlockList({
   blocks,
   onDelete,
   onEdit,
   onToggleComplete,
 }: BlockListProps) {
+  const [earlierOpen, setEarlierOpen] = useState(false);
+
   const grouped = blocks.reduce<Record<string, Block[]>>((acc, block) => {
     if (!acc[block.date]) acc[block.date] = [];
     acc[block.date].push(block);
@@ -119,28 +153,59 @@ export default function BlockList({
   }, {});
 
   const sortedDates = Object.keys(grouped).sort((a, b) => a.localeCompare(b));
+  const today = dayjs().format("YYYY-MM-DD");
+
+  // Past dates are tucked behind a collapsed "Earlier" section so the list
+  // opens focused on today, while completed (or missed) blocks stay just a
+  // tap away rather than pushed out of reach as history piles up.
+  const earlierDates = sortedDates.filter((date) => date < today);
+  const currentDates = sortedDates.filter((date) => date >= today);
+  const earlierCount = earlierDates.reduce(
+    (sum, date) => sum + grouped[date].length,
+    0,
+  );
 
   return (
     <div className={styles.list}>
-      {sortedDates.map((date) => (
-        <section key={date} className={styles.dateGroup}>
-          <h3 className={styles.dateLabel}>
-            {dayjs(date).format("dddd, D MMMM YYYY")}
-          </h3>
-          <div className={styles.cards}>
-            {grouped[date]
-              .sort((a, b) => a.startTime.localeCompare(b.startTime))
-              .map((block) => (
-                <BlockCard
-                  key={block.id}
-                  block={block}
+      {earlierDates.length > 0 && (
+        <section className={styles.earlierSection}>
+          <button
+            type="button"
+            className={styles.earlierToggle}
+            onClick={() => setEarlierOpen((open) => !open)}
+            aria-expanded={earlierOpen}
+          >
+            <span className={styles.earlierChevron}>
+              {earlierOpen ? "▾" : "▸"}
+            </span>
+            Earlier ({earlierCount})
+          </button>
+          {earlierOpen && (
+            <div className={styles.earlierBody}>
+              {earlierDates.map((date) => (
+                <DateGroup
+                  key={date}
+                  date={date}
+                  blocks={grouped[date]}
                   onDelete={onDelete}
                   onEdit={onEdit}
                   onToggleComplete={onToggleComplete}
                 />
               ))}
-          </div>
+            </div>
+          )}
         </section>
+      )}
+
+      {currentDates.map((date) => (
+        <DateGroup
+          key={date}
+          date={date}
+          blocks={grouped[date]}
+          onDelete={onDelete}
+          onEdit={onEdit}
+          onToggleComplete={onToggleComplete}
+        />
       ))}
     </div>
   );

@@ -4,6 +4,42 @@
   gap: 2rem;
 }
 
+.earlierSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.earlierToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  align-self: flex-start;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  background: transparent;
+  padding: 0.3rem 0;
+  transition: color 0.15s;
+}
+
+.earlierToggle:hover { color: var(--ink-soft); }
+
+.earlierChevron {
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+}
+
+.earlierBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
 .dateLabel {
   font-size: 0.8rem;
   font-weight: 500;

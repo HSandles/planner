@@ -118,7 +118,7 @@ export default function BlockList({
     return acc;
   }, {});
 
-  const sortedDates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
+  const sortedDates = Object.keys(grouped).sort((a, b) => a.localeCompare(b));
 
   return (
     <div className={styles.list}>

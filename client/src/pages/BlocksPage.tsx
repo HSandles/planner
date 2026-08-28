@@ -19,15 +19,24 @@ export default function BlocksPage() {
 
   useEffect(() => { fetchBlocks() }, [])
 
-  // Handles both creating a new block and saving an edited one
-  const handleSave = (savedBlock: Block): void => {
-    setBlocks(prev => {
-      const exists = prev.find(b => b.id === savedBlock.id)
-      if (exists) {
-        return prev.map(b => b.id === savedBlock.id ? savedBlock : b)
-      }
-      return [savedBlock, ...prev]
-    })
+  // Handles creating a single block, creating a whole recurring series (an
+  // array), and saving an edited occurrence. `seriesWide` means the save also
+  // changed other occurrences we're not holding, so we refetch instead of
+  // patching just the one block we got back.
+  const handleSave = (saved: Block | Block[], seriesWide?: boolean): void => {
+    if (Array.isArray(saved)) {
+      setBlocks(prev => [...saved, ...prev])
+    } else if (seriesWide) {
+      fetchBlocks()
+    } else {
+      setBlocks(prev => {
+        const exists = prev.find(b => b.id === saved.id)
+        if (exists) {
+          return prev.map(b => b.id === saved.id ? saved : b)
+        }
+        return [saved, ...prev]
+      })
+    }
     setShowForm(false)
     setEditingBlock(null)
   }
@@ -77,7 +86,7 @@ export default function BlocksPage() {
         >
           <div className={styles.formModal}>
             <BlockForm
-              onAdd={handleSave}
+              onSave={handleSave}
               onCancel={handleCloseForm}
               existing={editingBlock ?? undefined}
             />
